@@ -17,7 +17,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-
 const connectionString = "mongodb://localhost:27017"
 const databaseName = "todo"
 const collectionName = "todolist"
@@ -25,33 +24,32 @@ const collectionName = "todolist"
 var collection *mongo.Collection
 
 func init() {
-  // set client options
-  clientOption := options.Client().ApplyURI(connectionString)
-  // connect to mongo
-  client, err := mongo.Connect(context.TODO(), clientOption)
+	// set client options
+	clientOption := options.Client().ApplyURI(connectionString)
+	// connect to mongo
+	client, err := mongo.Connect(context.TODO(), clientOption)
 
-  if err != nil {
-    log.Fatal(err)
-  }
+	if err != nil {
+		log.Fatal(err)
+	}
 
-  err = client.Ping(context.TODO(), nil)
+	err = client.Ping(context.TODO(), nil)
 
-  if err != nil {
-    log.Fatal(err)
-  }
+	if err != nil {
+		log.Fatal(err)
+	}
 
-  fmt.Println("Connected to mongodb")
+	fmt.Println("Connected to mongodb")
 
-  collection = client.Database(databaseName).Collection(collectionName)
+	collection = client.Database(databaseName).Collection(collectionName)
 
-  fmt.Println("Collection created and ready!")
+	fmt.Println("Collection created and ready!")
 }
 
-
 func GetAllTask(w http.ResponseWriter, r *http.Request) {
-  w.Header().Set("Access-Control-Allow-Origin", "*")
-  payload := getAllTask()
-  json.NewEncoder(w).Encode(payload)
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	payload := getAllTask()
+	json.NewEncoder(w).Encode(payload)
 }
 
 func getAllTask() []primitive.M {
@@ -81,17 +79,13 @@ func getAllTask() []primitive.M {
 }
 
 func CreateTask(w http.ResponseWriter, r *http.Request) {
-  w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
-  w.Header().Set("Access-Control-Allow-Origin", "*")
-  w.Header().Set("Access-Control-Allow-Methods", "POST")
-  w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-  var task models.Todo
-  _ = json.NewDecoder(r.Body).Decode(&task)
-  fmt.Println(task, r.Body)
-  insertOneTask(task)
-  json.NewEncoder(w).Encode(task)
+	w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "POST")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	var task models.Todo
+	_ = json.NewDecoder(r.Body).Decode(&task)
+	fmt.Println(task, r.Body)
+	task.InsertOneTask(collection)
+	json.NewEncoder(w).Encode(task)
 }
-
-
-
-
