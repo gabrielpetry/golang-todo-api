@@ -27,6 +27,9 @@ func main() {
 	postRouter := sm.Methods("POST").Subrouter()
 	postRouter.HandleFunc("/", ph.CreateTodo)
 
+	putRouter := sm.Methods("PUT").Subrouter()
+	putRouter.HandleFunc("/{id}", ph.UpdateTodo)
+
 	server := &http.Server{
 		Addr:         ":9090",
 		Handler:      sm,
