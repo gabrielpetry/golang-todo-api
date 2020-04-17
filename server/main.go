@@ -15,7 +15,6 @@ import (
 )
 
 func main() {
-
 	database.Init()
 
 	l := log.New(os.Stdout, "product-api", log.LstdFlags)

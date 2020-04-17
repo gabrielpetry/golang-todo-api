@@ -41,6 +41,5 @@ func Init() {
 
 // GetCollectionPointer returns the pointer to the collection
 func GetCollectionPointer() *mongo.Collection {
-	log.Println("Collection", collection)
 	return collection
 }
