@@ -2,7 +2,6 @@ package models
 
 import (
 	"context"
-	"fmt"
 	"log"
 
 	"../database"
@@ -35,7 +34,7 @@ func (todo *Todo) InsertOne() error {
 		return err
 	}
 
-	fmt.Println("Inserted a Single Record ", insertResult.InsertedID)
+	log.Println("Inserted a Single Record ", insertResult.InsertedID)
 	return nil
 }
 
@@ -53,9 +52,22 @@ func (todo *Todo) Update(id string) error {
 	return err
 }
 
+// Delete removes an entry
+func (todo *Todo) Delete(id string) error {
+	log.Println("Deleting", todo)
+	oid, err := primitive.ObjectIDFromHex(id)
+	collection := database.GetCollectionPointer()
+	doc, err := collection.DeleteOne(
+		context.Background(),
+		bson.M{"_id": bson.M{"$eq": oid}},
+	)
+	log.Println(doc, err)
+	return err
+}
+
 // GetAll searchs all todos in the database
 func (todo *Todo) GetAll() ([]Todo, error) {
-	fmt.Println("Getting all todos")
+	log.Println("Getting all todos")
 	todos := []Todo{}
 	log.Println(database.GetCollectionPointer())
 	cursor, err := database.GetCollectionPointer().Find(context.TODO(), bson.D{})

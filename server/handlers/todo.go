@@ -63,3 +63,20 @@ func (todo *Todos) UpdateTodo(rw http.ResponseWriter, r *http.Request) {
 
 	log.Println(id)
 }
+
+func (todo *Todos) DeleteTodo(rw http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id := vars["id"]
+
+	err := todoModel.Delete(id)
+
+	if err != nil {
+		log.Fatal(err)
+		http.Error(rw, "Unabble to decode json", http.StatusInternalServerError)
+		return
+	}
+
+	todoModel.Update(id)
+
+	log.Println(id)
+}

@@ -30,6 +30,9 @@ func main() {
 	putRouter := sm.Methods("PUT").Subrouter()
 	putRouter.HandleFunc("/{id}", ph.UpdateTodo)
 
+	deleteRouter := sm.Methods("DELETE").Subrouter()
+	deleteRouter.HandleFunc("/{id}", ph.DeleteTodo)
+
 	server := &http.Server{
 		Addr:         ":9090",
 		Handler:      sm,
