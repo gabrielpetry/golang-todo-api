@@ -10,21 +10,27 @@ import (
 
 type Todos struct{}
 
-var todoModel *models.Todo = models.NewTodo()
+var todoModel models.Todo = models.Todo{}
 
 // NewTodo creates an instance of todos
 func NewTodo() *Todos {
 	return &Todos{}
 }
 func (p *Todos) CreateTodo(rw http.ResponseWriter, r *http.Request) {
-	newTodo := models.Todo{
-		Task: "teste",
+	// newTodo := models.Todo{
+	// 	Task: "teste",
+	// }
+
+	err := todoModel.FromJSON(r.Body)
+
+	if err != nil {
+		http.Error(rw, "Unable to unmarshal json", http.StatusBadRequest)
+		return
 	}
-	// var task models.Todo
-	//_ := json.NewDecoder(r.Body)
-	// fmt.Println(newTodo)
-	newTodo.InsertOne()
-	json.NewEncoder(rw).Encode(newTodo)
+
+	todoModel.InsertOne()
+
+	json.NewEncoder(rw).Encode(todoModel)
 }
 
 func (p *Todos) GetTodos(rw http.ResponseWriter, r *http.Request) {

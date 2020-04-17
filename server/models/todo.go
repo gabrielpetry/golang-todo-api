@@ -2,7 +2,9 @@ package models
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -47,8 +49,9 @@ type Todo struct {
 	Status bool               `json:"status,omitempty"`
 }
 
-func NewTodo() *Todo {
-	return &Todo{}
+func (p *Todo) FromJSON(r io.Reader) error {
+	e := json.NewDecoder(r)
+	return e.Decode(p)
 }
 
 // InsertOne handle the insertion of a new entry
