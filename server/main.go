@@ -1,18 +1,61 @@
 package main
 
 import (
-	"fmt"
+	"context"
 	"log"
 	"net/http"
+	"os"
+	"os/signal"
+	"time"
 
-	"./router"
+	"./handlers"
+
+	"./models"
+	"github.com/gorilla/mux"
 )
 
 func main() {
 
-    r := router.Router()
+	models.Init()
 
-    fmt.Println("Starting server on the port 8080...")
+	l := log.New(os.Stdout, "product-api", log.LstdFlags)
+	l.Println(1)
 
-    log.Fatal(http.ListenAndServe(":8080", r))
+	ph := handlers.NewTodo()
+	sm := mux.NewRouter()
+
+	getRouter := sm.Methods("GET").Subrouter()
+	getRouter.HandleFunc("/", ph.GetTodos)
+
+	postRouter := sm.Methods("POST").Subrouter()
+	postRouter.HandleFunc("/", ph.CreateTodo)
+
+	server := &http.Server{
+		Addr:         ":9090",
+		Handler:      sm,
+		IdleTimeout:  120 * time.Second,
+		ReadTimeout:  1 * time.Second,
+		WriteTimeout: 1 * time.Second,
+	}
+
+	go func() {
+		err := server.ListenAndServe()
+		if err != nil {
+			log.Fatal(err)
+			os.Exit(1)
+		}
+	}()
+
+	// trap sigterm or interupt and gracefully shutdown the server
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt)
+	signal.Notify(c, os.Kill)
+
+	// block until a signal is received.
+	sig := <-c
+	log.Println("got signal:", sig)
+
+	// gracefully shutdown the server, waiting max 30 seconds for current operations to complete
+	ctx, _ := context.WithTimeout(context.Background(), 30*time.Second)
+	server.Shutdown(ctx)
 }
