@@ -10,13 +10,13 @@ import (
 
 	"./handlers"
 
-	"./models"
+	"./database"
 	"github.com/gorilla/mux"
 )
 
 func main() {
 
-	models.Init()
+	database.Init()
 
 	l := log.New(os.Stdout, "product-api", log.LstdFlags)
 	l.Println(1)

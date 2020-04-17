@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
+	"log"
 	"net/http"
 
 	"../models"
@@ -21,25 +21,27 @@ func (p *Todos) CreateTodo(rw http.ResponseWriter, r *http.Request) {
 	// 	Task: "teste",
 	// }
 
-	err := todoModel.FromJSON(r.Body)
+	// err := todoModel.FromJSON(r.Body)
+	log.Println("model", todoModel)
+
+	err := json.NewDecoder(r.Body).Decode(&todoModel)
 
 	if err != nil {
 		http.Error(rw, "Unable to unmarshal json", http.StatusBadRequest)
+		log.Println("error", err)
 		return
 	}
 
 	todoModel.InsertOne()
 
-	json.NewEncoder(rw).Encode(todoModel)
+	rw.WriteHeader(http.StatusCreated)
 }
 
-func (p *Todos) GetTodos(rw http.ResponseWriter, r *http.Request) {
-	lp, _ := todoModel.GetAll()
-	encoder := json.NewEncoder(rw)
-	fmt.Println(lp)
-	encoder.Encode(lp)
+func (todo *Todos) GetTodos(rw http.ResponseWriter, r *http.Request) {
+	todoModel, _ := todoModel.GetAll()
+	err := json.NewEncoder(rw).Encode(todoModel)
 	// err := lp.ToJSON(rw)
-	// if err != nil {
-	// 	http.Error(rw, "Unabble to marshal json", http.StatusInternalServerError)
-	// }
+	if err != nil {
+		http.Error(rw, "Unabble to marshal json", http.StatusInternalServerError)
+	}
 }
