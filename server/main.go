@@ -15,10 +15,8 @@ import (
 )
 
 func main() {
+	log.Println("Starting the application")
 	database.Init()
-
-	l := log.New(os.Stdout, "product-api", log.LstdFlags)
-	l.Println(1)
 
 	ph := handlers.NewTodo()
 	sm := mux.NewRouter()
