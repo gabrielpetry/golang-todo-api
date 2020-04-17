@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"../models"
+	"github.com/gorilla/mux"
 )
 
 type Todos struct{}
@@ -44,4 +45,21 @@ func (todo *Todos) GetTodos(rw http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(rw, "Unabble to marshal json", http.StatusInternalServerError)
 	}
+}
+
+func (todo *Todos) UpdateTodo(rw http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id := vars["id"]
+
+	err := json.NewDecoder(r.Body).Decode(&todoModel)
+
+	if err != nil {
+		log.Fatal(err)
+		http.Error(rw, "Unabble to decode json", http.StatusInternalServerError)
+		return
+	}
+
+	todoModel.Update(id)
+
+	log.Println(id)
 }
