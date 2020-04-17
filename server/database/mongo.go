@@ -2,8 +2,8 @@ package database
 
 import (
 	"context"
-	"fmt"
 	"log"
+	"time"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -11,14 +11,19 @@ import (
 
 var collection *mongo.Collection
 
-const connectionString = "mongodb://localhost:27017"
+const connectionString = "mongodb://localhost:27017/?connectTimeoutMS=5000"
 const databaseName = "todo"
 const collectionName = "todolist"
 
 // Init makes the connection creates de collection
 func Init() {
+	log.Println("Trying connection to MongoDb")
 	// set client options
-	clientOption := options.Client().ApplyURI(connectionString)
+	clientOption := options.Client()
+	clientOption.SetConnectTimeout(2 * time.Second)
+	clientOption.SetSocketTimeout(2 * time.Second)
+	clientOption.SetMaxConnIdleTime(1 * time.Second)
+	clientOption.ApplyURI(connectionString)
 	// connect to mongo
 	client, err := mongo.Connect(context.TODO(), clientOption)
 
@@ -32,11 +37,11 @@ func Init() {
 		log.Fatal(err)
 	}
 
-	fmt.Println("Connected to mongodb")
+	log.Println("Connected to mongodb")
 
 	collection = client.Database(databaseName).Collection(collectionName)
 
-	fmt.Println("Collection created and ready!")
+	log.Println("Collection created and ready!")
 }
 
 // GetCollectionPointer returns the pointer to the collection
