@@ -11,6 +11,7 @@ import (
 	"./handlers"
 
 	"./database"
+	gorillaHandlers "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 )
 
@@ -26,16 +27,18 @@ func main() {
 
 	postRouter := sm.Methods("POST").Subrouter()
 	postRouter.HandleFunc("/", ph.CreateTodo)
+	// postRouter.Use(ph.MiddlewareTodoValidation)
 
 	putRouter := sm.Methods("PUT").Subrouter()
 	putRouter.HandleFunc("/{id}", ph.UpdateTodo)
+	// putRouter.Use(ph.MiddlewareTodoValidation)
 
 	deleteRouter := sm.Methods("DELETE").Subrouter()
 	deleteRouter.HandleFunc("/{id}", ph.DeleteTodo)
 
 	server := &http.Server{
 		Addr:         ":9090",
-		Handler:      sm,
+		Handler:      gorillaHandlers.CORS()(sm),
 		IdleTimeout:  120 * time.Second,
 		ReadTimeout:  1 * time.Second,
 		WriteTimeout: 1 * time.Second,
