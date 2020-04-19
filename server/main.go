@@ -11,8 +11,8 @@ import (
 	"./handlers"
 
 	"./database"
-	gorillaHandlers "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	"github.com/rs/cors"
 )
 
 func main() {
@@ -36,9 +36,21 @@ func main() {
 	deleteRouter := sm.Methods("DELETE").Subrouter()
 	deleteRouter.HandleFunc("/{id}", ph.DeleteTodo)
 
+	corsOpts := cors.New(cors.Options{
+		AllowedOrigins: []string{"*"}, //you service is available and allowed for this base url
+		AllowedMethods: []string{
+			http.MethodGet, //http methods for your app
+			http.MethodPost,
+			http.MethodPut,
+			http.MethodPatch,
+			http.MethodDelete,
+			http.MethodOptions,
+			http.MethodHead,
+		},
+	})
 	server := &http.Server{
 		Addr:         ":9090",
-		Handler:      gorillaHandlers.CORS()(sm),
+		Handler:      corsOpts.Handler(sm),
 		IdleTimeout:  120 * time.Second,
 		ReadTimeout:  1 * time.Second,
 		WriteTimeout: 1 * time.Second,
