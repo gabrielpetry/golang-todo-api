@@ -18,4 +18,6 @@ live reload using modd ;)
 curl -XPOST -d '{"task": "Kill Stormtroopers", "completed": false}' localhost:9090
 
 curl localhost:9090
+
+# other rest operations work as well, but i'm too lazy to create example ;) 
 ```
