@@ -6,6 +6,7 @@ A simple todo list api with go and mongodb
 
 
 ```bash
-go mod download
-go run src/main.go
+docker-compose up -d
 ```
+
+live reload using modd ;) 
