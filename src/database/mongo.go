@@ -11,7 +11,7 @@ import (
 
 var collection *mongo.Collection
 
-const connectionString = "mongodb://localhost:27017/?connectTimeoutMS=5000"
+const connectionString = "mongodb://mongo:27017/?connectTimeoutMS=5000"
 const databaseName = "todo"
 const collectionName = "todolist"
 

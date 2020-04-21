@@ -17,5 +17,19 @@ services:
     links:
       - mongo
 
+  web-app:
+    build: ./
+    volumes:
+      - ./src:/app/src
+      - ./go.mod:/app/go.mod
+      - ./go.sum:/app/go.sum
+      - ./modd.conf:/app/modd.conf
+    ports:
+      - 9090:9090
+    links:
+      - mongo
+    depends_on:
+      - mongo
+
 volumes:
   mongo-data:

@@ -8,9 +8,9 @@ import (
 	"os/signal"
 	"time"
 
-	"./handlers"
+	"host.local/go/golang-todo-api/src/handlers"
 
-	"./database"
+	"host.local/go/golang-todo-api/src/database"
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
 )

@@ -4,7 +4,7 @@ import (
 	"context"
 	"log"
 
-	"../database"
+	"host.local/go/golang-todo-api/src/database"
 	"github.com/go-playground/validator"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
