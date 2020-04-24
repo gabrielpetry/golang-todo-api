@@ -2,7 +2,7 @@ FROM golang:alpine
 
 
 # reload source code
-RUN go get github.com/cortesi/modd/cmd/modd
+RUN env GO111MODULE=on go get github.com/cortesi/modd/cmd/modd
 
 WORKDIR /app
 
