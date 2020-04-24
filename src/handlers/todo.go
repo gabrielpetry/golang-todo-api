@@ -1,12 +1,10 @@
 package handlers
 
 import (
-	"encoding/json"
-	"log"
 	"net/http"
 
+	"github.com/gin-gonic/gin"
 	"host.local/go/golang-todo-api/src/models"
-	"github.com/gorilla/mux"
 )
 
 type Todos struct{}
@@ -17,66 +15,64 @@ var todoModel models.Todo = models.Todo{}
 func NewTodo() *Todos {
 	return &Todos{}
 }
-func (p *Todos) CreateTodo(rw http.ResponseWriter, r *http.Request) {
-	// newTodo := models.Todo{
-	// 	Task: "teste",
-	// }
 
-	// err := todoModel.FromJSON(r.Body)
-	log.Println("model", todoModel)
+func (p *Todos) CreateTodo(c *gin.Context) {
 
-	err := json.NewDecoder(r.Body).Decode(&todoModel)
+	c.BindJSON(&todoModel)
 
-	if err != nil {
-		http.Error(rw, "Unable to unmarshal json", http.StatusBadRequest)
-		log.Println("error", err)
+	if len(todoModel.Task) < 2 {
+		c.JSON(
+			http.StatusInternalServerError,
+			gin.H{"error": "todo must be at least 3 chars length"},
+		)
 		return
 	}
 
-	todoModel.InsertOne()
-
-	rw.WriteHeader(http.StatusCreated)
-}
-
-func (todo *Todos) GetTodos(rw http.ResponseWriter, r *http.Request) {
-	todoModel, _ := todoModel.GetAll()
-	err := json.NewEncoder(rw).Encode(todoModel)
-	// err := lp.ToJSON(rw)
-	if err != nil {
-		http.Error(rw, "Unabble to marshal json", http.StatusInternalServerError)
-	}
-}
-
-func (todo *Todos) UpdateTodo(rw http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	id := vars["id"]
-
-	err := json.NewDecoder(r.Body).Decode(&todoModel)
+	err := todoModel.InsertOne()
 
 	if err != nil {
-		log.Fatal(err)
-		http.Error(rw, "Unabble to decode json", http.StatusInternalServerError)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err})
 		return
 	}
 
-	todoModel.Update(id)
-
-	log.Println(id)
+	c.Status(http.StatusCreated)
 }
 
-func (todo *Todos) DeleteTodo(rw http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	id := vars["id"]
+func (todo *Todos) GetTodos(c *gin.Context) {
+	todoModel, err := todoModel.GetAll()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		return
+	}
+	// c.JSON(http.StatusOK, gin.H{"tasks": todoModel})
+	c.JSON(http.StatusOK, todoModel)
+}
+
+func (todo *Todos) UpdateTodo(c *gin.Context) {
+	id := c.Param("id")
+
+	c.BindJSON(&todoModel)
+
+	err := todoModel.Update(id)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		return
+	}
+
+	c.Status(http.StatusNoContent)
+}
+
+func (todo *Todos) DeleteTodo(c *gin.Context) {
+	id := c.Param("id")
 
 	err := todoModel.Delete(id)
 
 	if err != nil {
-		log.Fatal(err)
-		http.Error(rw, "Unabble to decode json", http.StatusInternalServerError)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err})
 		return
+
 	}
 
-	todoModel.Update(id)
-
-	log.Println(id)
+	c.Status(http.StatusNoContent)
 }
