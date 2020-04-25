@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"host.local/go/golang-todo-api/src/database"
 	"host.local/go/golang-todo-api/src/handlers"
+	"host.local/go/golang-todo-api/src/middlewares"
 )
 
 func main() {
@@ -15,6 +16,8 @@ func main() {
 	todoController := handlers.NewTodo()
 
 	router := gin.Default()
+
+	router.Use(middlewares.CORSMiddleware())
 
 	router.GET("/", todoController.GetTodos)
 
