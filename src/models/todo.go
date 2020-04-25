@@ -50,7 +50,7 @@ func (todo *Todo) Update(id string) error {
 	)
 
 	if err != nil {
-		log.Error(doc, err)
+		log.Error("Error updating", doc, err)
 	}
 
 	return err
@@ -67,7 +67,7 @@ func (todo *Todo) Delete(id string) error {
 	)
 
 	if err != nil {
-		log.Error(doc, err)
+		log.Error("Error deleting", doc, err)
 	}
 
 	return err
@@ -78,6 +78,7 @@ func (todo *Todo) GetAll() ([]Todo, error) {
 	todos := []Todo{}
 	cursor, err := database.GetCollectionPointer().Find(context.TODO(), bson.D{})
 	if err != nil {
+		log.Error("Error with collection pointer", err)
 		return todos, err
 	}
 
@@ -86,7 +87,7 @@ func (todo *Todo) GetAll() ([]Todo, error) {
 		err := cursor.Decode(&elem)
 
 		if err != nil {
-			log.Fatal(err)
+			log.Error("Error decoding cursor", err)
 		}
 
 		todos = append(todos, elem)
