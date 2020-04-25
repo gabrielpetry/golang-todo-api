@@ -1,7 +1,7 @@
 package main
 
 import (
-	"log"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/gin-gonic/gin"
 	"host.local/go/golang-todo-api/src/database"
@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	log.Println("Starting the application")
+	log.Info("Starting the application")
 	database.Init()
 
 	todoController := handlers.NewTodo()
