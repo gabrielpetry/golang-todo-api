@@ -1,8 +1,6 @@
 package main
 
 import (
-	log "github.com/sirupsen/logrus"
-
 	"github.com/gin-gonic/gin"
 	"host.local/go/golang-todo-api/src/database"
 	"host.local/go/golang-todo-api/src/handlers"

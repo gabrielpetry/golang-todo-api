@@ -2,7 +2,8 @@ package models
 
 import (
 	"context"
-	"log"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/go-playground/validator"
 	"go.mongodb.org/mongo-driver/bson"
@@ -26,19 +27,18 @@ func (todo *Todo) Validate() error {
 	return validate.Struct(todo)
 }
 
-// InsertOne handle the insertion of a new entry
+// InsertOne insert a new entry
 func (todo *Todo) InsertOne() error {
-	insertResult, err := database.GetCollectionPointer().InsertOne(context.Background(), todo)
+	_, err := database.GetCollectionPointer().InsertOne(context.Background(), todo)
 
 	if err != nil {
 		return err
 	}
 
-	log.Println("Inserted a Single Record ", insertResult.InsertedID)
 	return nil
 }
 
-// Update updatse an element
+// Update updates an element
 func (todo *Todo) Update(id string) error {
 	log.Println("Updating", todo)
 	oid, err := primitive.ObjectIDFromHex(id)
