@@ -48,7 +48,11 @@ func (todo *Todo) Update(id string) error {
 		bson.M{"_id": bson.M{"$eq": oid}},
 		bson.M{"$set": todo},
 	)
-	log.Println(doc, err)
+
+	if err != nil {
+		log.Error(doc, err)
+	}
+
 	return err
 }
 
@@ -61,15 +65,17 @@ func (todo *Todo) Delete(id string) error {
 		context.Background(),
 		bson.M{"_id": bson.M{"$eq": oid}},
 	)
-	log.Println(doc, err)
+
+	if err != nil {
+		log.Error(doc, err)
+	}
+
 	return err
 }
 
 // GetAll searchs all todos in the database
 func (todo *Todo) GetAll() ([]Todo, error) {
-	log.Println("Getting all todos")
 	todos := []Todo{}
-	log.Println(database.GetCollectionPointer())
 	cursor, err := database.GetCollectionPointer().Find(context.TODO(), bson.D{})
 	if err != nil {
 		return todos, err
