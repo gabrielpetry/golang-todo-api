@@ -12,19 +12,21 @@ func main() {
 	log.Info("Starting the application")
 	database.Init()
 
-	todoController := handlers.NewTodo()
+	todoHandler := handlers.NewTodo()
+	bookHandler := handlers.NewBook()
 
 	router := gin.Default()
 
 	router.Use(middlewares.CORSMiddleware())
 
-	router.GET("/", todoController.GetTodos)
+	router.GET("/", todoHandler.GetTodos)
+	router.GET("/books", bookHandler.GetBooks)
 
-	router.POST("/", todoController.CreateTodo)
+	router.POST("/", todoHandler.CreateTodo)
 
-	router.PUT("/:id", todoController.UpdateTodo)
+	router.PUT("/:id", todoHandler.UpdateTodo)
 
-	router.DELETE("/:id", todoController.DeleteTodo)
+	router.DELETE("/:id", todoHandler.DeleteTodo)
 
 	router.Run(":9090")
 
